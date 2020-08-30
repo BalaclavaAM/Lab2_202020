@@ -35,7 +35,7 @@ def cmpfunction (element1, element2):
 
 def peliculas():
     peliculas=[]
-    archivo=open("Data/AllMoviesDetailsCleaned.csv","r",encoding="utf-8")
+    archivo=open("Data/SmallMoviesDetailsCleaned.csv","r",encoding="utf-8")
     linea_1=archivo.readline()
     titles=linea_1.split(";")
     linea=archivo.readline()
