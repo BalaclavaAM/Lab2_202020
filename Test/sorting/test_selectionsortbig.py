@@ -56,6 +56,8 @@ def printList(lst):
         print(element['goodreads_book_id'])
 
 def less(element1, element2):
+    print(element1)
+    print(element2)
     if int(element1['goodreads_book_id']) < int(element2['goodreads_book_id']):
         return True
     return False

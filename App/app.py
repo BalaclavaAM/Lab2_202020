@@ -32,6 +32,7 @@ import csv
 from ADT import list as lt
 from DataStructures import listiterator as it
 from DataStructures import liststructure as lt
+from Sorting import mergesort as me
 
 from time import process_time 
 
@@ -76,6 +77,7 @@ def printMenu():
     print("2- Contar los elementos de la Lista")
     print("3- Contar elementos filtrados por palabra clave")
     print("4- Consultar elementos a partir de dos listas")
+    print("5- Ordenar elementos por criterio ")
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -112,12 +114,45 @@ def countElementsByCriteria(criteria, column, lst):
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
     return 0
+def ordenarAverageAsc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_average'])>float(mov2['vote_average']):
+        return True
+    return False
+def ordenarAverageDesc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_average'])<float(mov2['vote_average']):
+        return True
+    return False
+def ordenarCountAsc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_count'])>float(mov2['vote_count']):
+        return True
+    return False
+def ordenarCountDesc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_count'])<float(mov2['vote_count']):
+        return True
+    return False
 
-def orderElementsByCriteria(function, column, lst, elements):
-    """
-    Retorna una lista con cierta cantidad de elementos ordenados por el criterio
-    """
-    return 0
+
+def orderElementsByCriteria(peliculas,n_peliculas,CoA,ascOdesc):
+    lista_return=[]
+    iterador=it.newIterator(peliculas)
+    t1_start = process_time()
+    if CoA == True:
+        if ascOdesc == True:
+            me.mergesort(peliculas,ordenarCountAsc)
+        elif ascOdesc == False:
+             me.mergesort(peliculas,ordenarCountDesc)
+    elif CoA== False:
+        if ascOdesc ==True:
+            me.mergesort(peliculas,ordenarAverageAsc)
+        elif ascOdesc == False:
+             me.mergesort(peliculas, ordenarAverageDesc)
+    while n_peliculas != -1 and it.hasNext(iterador):
+            n_peliculas-= 1
+            movie = it.next(iterador)
+            lista_return.append(movie)
+    t1_stop = process_time()
+    print("Tardó "+str(t1_stop-t1_start))
+    return lista_return
 
 def main():
     """
@@ -133,7 +168,8 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                lista = loadCSVFile("Data/test.csv") #llamar funcion cargar datos
+                listamovies = loadCSVFile("Data/AllMoviesDetailsCleaned.csv") #llamar funcion cargar datos
+                listacasting = loadCSVFile("Data/AllMoviesCastingRaw.csv")
                 print("Datos cargados, ",lista['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion 2
                 if lista==None or lista['size']==0: #obtener la longitud de la lista
@@ -153,6 +189,25 @@ def main():
                     criteria =input('Ingrese el criterio de búsqueda\n')
                     counter=countElementsByCriteria(criteria,0,lista)
                     print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
+            elif int(inputs[0])==5:
+                cantidad = int(input("Escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))
+                while 10>cantidad:
+                    print("La cantidad debe ser mayor a 10.")
+                    cantidad=int(input("Escriba la cantidad de películas que quiere en el ranking: "))
+                AoC=input("Escriba Average, de lo contrario escriba Count: ").title()
+                ascOdesc= input("Según el orden que quiera escriba ascendente o descendente: ").title()
+                if AoC == "Average":
+                    if ascOdesc == "Ascendente":
+                        lista_final=orderElementsByCriteria(listamovies,cantidad,False,False)
+                    elif ascOdesc == "Descendente":
+                        lista_final=orderElementsByCriteria(listamovies,cantidad,False,True)
+                elif AoC == "Count":
+                    if ascOdesc == "Ascendente":
+                        lista_final=orderElementsByCriteria(listamovies,cantidad,True,False)
+                    elif ascOdesc == "Descendente":
+                        lista_final=orderElementsByCriteria(listamovies,cantidad,True,True)
+                if len(lista_final)>0:
+                    print("El ranking de películas es: ",lista_final)
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
